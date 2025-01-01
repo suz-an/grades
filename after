@@ -5,64 +5,66 @@ import java.util.Scanner;
 public class StudentGradeCalculator {
 
     public static void main(String[] args) {
+        StudentGradeCalculator calculator = new StudentGradeCalculator();
+        calculator.run();
+    }
+
+    private void run() {
         Scanner scanner = new Scanner(System.in);
 
+        int numberOfStudents = getNumberOfStudents(scanner);
+        List<String> studentNames = new ArrayList<>();
+        List<Double> studentGrades = new ArrayList<>();
+
+        collectStudentData(scanner, numberOfStudents, studentNames, studentGrades);
+        displayStudentReport(studentNames, studentGrades);
+
+        double average = calculateAverage(studentGrades);
+        System.out.printf("\nAverage Grade: %.2f%n", average);
+
+        scanner.close();
+    }
+
+    private int getNumberOfStudents(Scanner scanner) {
         System.out.print("Enter the number of students: ");
-        int numberOfStudents = scanner.nextInt();
+        while (!scanner.hasNextInt()) {
+            System.out.println("Invalid input. Please enter a valid number.");
+            scanner.next();
+        }
+        return scanner.nextInt();
+    }
 
-        List<Student> students = new ArrayList<>();
-
+    private void collectStudentData(Scanner scanner, int numberOfStudents, List<String> studentNames, List<Double> studentGrades) {
         for (int i = 0; i < numberOfStudents; i++) {
-            students.add(createStudent(scanner, i + 1));
+            System.out.print("Enter the name of student " + (i + 1) + ": ");
+            String name = scanner.next();
+            studentNames.add(name);
+
+            System.out.print("Enter the grade of student " + (i + 1) + ": ");
+            double grade = getValidGrade(scanner);
+            studentGrades.add(grade);
         }
-
-        double averageGrade = calculateAverageGrade(students);
-
-        printStudentGradeReport(students, averageGrade);
     }
 
-    private static Student createStudent(Scanner scanner, int studentNumber) {
-        System.out.print("Enter the name of student " + studentNumber + ": ");
-        String name = scanner.next();
-
-        System.out.print("Enter the grade of student " + studentNumber + ": ");
-        double grade = scanner.nextDouble();
-
-        return new Student(name, grade);
-    }
-
-    private static double calculateAverageGrade(List<Student> students) {
-        double total = 0.0;
-        for (Student student : students) {
-            total += student.getGrade();
+    private double getValidGrade(Scanner scanner) {
+        while (!scanner.hasNextDouble()) {
+            System.out.println("Invalid input. Please enter a valid grade.");
+            scanner.next();
         }
-        return total / students.size();
+        return scanner.nextDouble();
     }
 
-    private static void printStudentGradeReport(List<Student> students, double averageGrade) {
+    private void displayStudentReport(List<String> studentNames, List<Double> studentGrades) {
         System.out.println("\nStudent Grade Report:");
-        for (Student student : students) {
-            System.out.println(student.getName() + ": " + student.getGrade());
+        for (int i = 0; i < studentNames.size(); i++) {
+            System.out.printf("%s: %.2f%n", studentNames.get(i), studentGrades.get(i));
         }
-
-        System.out.println("\nAverage Grade: " + averageGrade);
-    }
-}
-
-class Student {
-    private String name;
-    private double grade;
-
-    public Student(String name, double grade) {
-        this.name = name;
-        this.grade = grade;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public double getGrade() {
-        return grade;
+    private double calculateAverage(List<Double> grades) {
+        return grades.stream()
+                .mapToDouble(Double::doubleValue)
+                .average()
+                .orElse(0.0);
     }
 }
