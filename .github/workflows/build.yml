@@ -18,3 +18,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+           
+run-name: Run SonarCloud analysis
+  
+    mvn clean verify sonar:sonar \
+    -Dsonar.projectKey=your_project_key \
+    -Dsonar.organization=your_organization \
+    -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+    -X
