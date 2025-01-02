@@ -19,9 +19,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
            runner- name:SonarCloud analysis
-  run:
-    mvn clean verify sonar:sonar \
-    -Dsonar.projectKey=your_project_key \
-    -Dsonar.organization=your_organization \
-    -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+  name: Run SonarCloud analysis
+        run: mvn sonar:sonar \
+          -Dsonar.projectKey=your_project_key \
+          -Dsonar.organization=your_organization \
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}  # Correct secret reference
     -X
