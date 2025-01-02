@@ -1,27 +1,28 @@
-name: Build
+name: Build and Analyze with SonarCloud
+
 on:
   push:
     branches:
       - main
-  pull_request:
-    types: [opened, synchronize, reopened]
+
 jobs:
-  sonarqube:
-    name: SonarQube
-    runs-on: windows-latest
+  build:
+    runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v4
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-           runner- name:SonarCloud analysis
-  name: Run SonarCloud analysis
+          java-version: '11'
+
+      - name: Build with Maven
+        run: mvn clean install
+
+      - name: Run SonarCloud analysis
         run: mvn sonar:sonar \
           -Dsonar.projectKey=your_project_key \
           -Dsonar.organization=your_organization \
-          -Dsonar.login=${{ secrets.SONAR_TOKEN }}  # Correct secret reference
-    -X
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
