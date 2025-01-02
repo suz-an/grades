@@ -8,6 +8,13 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Test Secret Access
-        run: echo "Secret Value: ${{ secrets.SONAR_TOKEN }}"
+      - name: Check if Secret is Set
+        run: |
+          if [ -z "${{ secrets.SONAR_TOKEN }}" ]; then
+            echo "Secret SONAR_TOKEN is not set or is empty."
+            exit 1
+          else
+            echo "Secret SONAR_TOKEN is set."
+          fi
